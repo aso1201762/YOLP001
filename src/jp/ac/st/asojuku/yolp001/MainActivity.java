@@ -19,9 +19,9 @@ public class MainActivity extends Activity implements LocationListener {
 	//MapViewを準備
 	MapView mMapView = null;
 	//直前の経度（1000000倍精度）
-	int lastLatitube = 0;
+	int lastLatitude = 0;
 	//直前の経度(1000000倍精度)
-	int lastLongitube = 0;
+	int lastLongitude = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,12 +87,24 @@ public class MainActivity extends Activity implements LocationListener {
 		
 		//緯度の取得
 		double lat = location.getLatitude();
-		int latitube = (int)(lat * 1000000);
+		int latitude = (int)(lat * 1000000);
 		//経度の取得
 		double lon = location.getLongitude();
 		int longitude = (int)(lon * 1000000);
 		
 		//緯度と経度のいずれかが直前の値と誤差が出れば、画面を更新（100で割って元々の緯度経度少数4桁、100ｍくらいの誤差にする）
+		if(latitude/1000 != this.lastLatitude/1000 || longitude/1000 != this.lastLongitude/1000){
+			//緯度経度情報（GeoPoint）の生成
+			GeoPoint gp = new GeoPoint(latitude,longitude);
+			//地図本体を取得
+			MapController c = mMapView.getMapController();
+			//地図本体にGeoPointoを設定
+			c.setCenter(gp);
+			
+			//今回の緯度経度を覚える
+			this.lastLatitude = latitude;
+			this.lastLongitude = longitude;
+		}
 	}
 
 	@Override
